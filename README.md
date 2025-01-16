@@ -4,7 +4,7 @@ SnackShop is an e-commerce application built with Django, enabling users to brow
 # Setup Guide
 
 1. *Create a new project directory*  
-2. *Download the .zip file* from [this link](https://github.com/RolandasAl/Snackshop).
+2. *Download the .zip file* 
 3. *Extract the contents* into the newly created project directory.
 4. Open your terminal and run the following command to install the necessary dependencies:  
    pip install -r requirements.txt
