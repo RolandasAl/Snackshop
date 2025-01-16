@@ -1,0 +1,83 @@
+/* Orders List */
+
+p {
+    text-align: center;
+    font-size: 1.2em;
+    color: #888;
+}
+
+ h3 {
+    text-align: center;
+}
+
+
+.order-header {
+    display: flex;
+
+}
+
+.order_id {
+    width:10%;
+}
+
+.created_date {
+    width: 20%;
+}
+
+.status {
+
+    width: 20%;
+}
+
+.product_name {
+     width: 30%;
+}
+
+.quantity {
+     width: 10%;
+}
+
+.price{
+     width: 10%;
+}
+
+.sum {
+     width: 10%;
+}
+
+.order-details {
+    display: flex;
+}
+
+.status-waiting {
+    color: orange;
+}
+
+.status-paid {
+    color: blue;
+}
+.status-completed {
+    color: #00ff00
+}
+.status-shipped {
+    color: red;
+}
+.order-footer {
+    display: flex;
+}
+
+.total_price {
+    width: 13%;
+}
+
+.pay {
+    width: 5%;
+}
+
+.cancel {
+    width:10%;
+}
+
+.shipping-detail {
+    width: 15%;
+}

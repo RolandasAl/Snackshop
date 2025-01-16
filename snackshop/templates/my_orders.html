@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}My Orders{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/orders.css' %}">
+<h3>Active Orders</h3>
+<hr>
+<!-- Active Orders  -->
+{% if orders %}
+<div class="order-list">
+    {% for order in orders %}
+    <div class="order-item">
+        <div class="order-header">
+            <div class="order_id">
+                <strong>Order ID:</strong> {{ order.id }}
+            </div>
+            <div class="created_date">
+                <strong>Created At:</strong> {{ order.created_at|date:"Y/m/d H:i" }}
+            </div>
+            <div class="status">
+                <strong>Status:</strong>
+                <span class="{% if order.status == 'pending' %}status-pending{% elif order.status == 'waiting for payment' %}status-waiting{% elif order.status == 'paid' %}status-paid{% elif order.status == 'shipped' %}status-shipped{% endif %}">
+                    {{ order.status }}
+                </span>
+            </div>
+        </div>
+        <br>
+        <div>
+            {% for item in order.order_items.all %}
+            <div class="order-details">
+                <div class="product_name">
+                    <strong>{{ item.product.name }}</strong>
+                </div>
+                <div class="quantity">
+                    <strong>Quantity:</strong> {{ item.quantity }}
+                </div>
+                <div class="price">
+                    <strong>Price:</strong> {{ item.price }}€
+                </div>
+                <div class="sum">
+                    <strong>Sum:</strong> {{ item.item_sum }}€
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <br>
+        <div class="order-footer">
+            <span class="total_price">
+            <strong>Total Price:</strong> {{ order.final_price }}€
+            </span>
+            {% if order.status == 'waiting for payment' %}
+            <span class="pay">
+            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#paymentModal"
+                    {% if not order.address or not order.city or not order.postal_code or not order.phone_number %}
+                    disabled="disabled"
+                    {% endif %}>
+                Pay
+            </button>
+            </span>
+            {% endif %}
+            <!-- pay  -->
+            <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel"
+                 aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="paymentModalLabel">Enter Payment Details</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form method="post" action="{% url 'pay_order' order.id %}">
+                                {% csrf_token %}
+                                <div class="mb-3">
+                                    <label for="cardNumber" class="form-label">Card Number</label>
+                                    <input type="text" class="form-control" id="cardNumber" name="card_number" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="expiryDate" class="form-label">Expiry Date</label>
+                                    <input type="text" class="form-control" id="expiryDate" name="expiry_date"
+                                           placeholder="MM/YY" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="cvv" class="form-label">CVV</label>
+                                    <input type="text" class="form-control" id="cvv" name="cvv" required>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn btn-primary">Confirm Payment</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <form method="GET" action="{% url 'shipping_details' order.id %}" class="shipping-detail">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-info">Shipping Details</button>
+            </form>
+            {% if order.status != 'paid' and order.status != 'shipped' %}
+            <form method="post" action="{% url 'cancel_order' order.id %}" class="cancel">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Cancel</button>
+            </form>
+            {% endif %}
+        </div>
+        <hr>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<p>No orders.</p>
+{% endif %}
+<!-- Completed Orders  -->
+<h3>Order history</h3>
+{% if completed_orders %}
+<div class="order-list">
+    {% for order in completed_orders %}
+    <div class="order-item">
+        <div class="order-header">
+            <div class="order_id">
+                <strong>Order ID:</strong> {{ order.id }}
+            </div>
+            <div class="created_date">
+                <strong>Created At:</strong> {{ order.created_at|date:"Y/m/d H:i" }}
+            </div>
+            <div class="status">
+                <strong>Status:</strong>
+                <span class="status-completed">
+                    {{ order.status }}
+                </span>
+            </div>
+        </div>
+        <br>
+        <div>
+            {% for item in order.order_items.all %}
+            <div class="order-details">
+                <div class="product_name">
+                    <strong>{{ item.product.name }}</strong>
+                </div>
+                <div class="quantity">
+                    <strong>Quantity:</strong> {{ item.quantity }}
+                </div>
+                <div class="price">
+                    <strong>Price:</strong> {{ item.price }}€
+                </div>
+                <div class="sum">
+                    <strong>Sum:</strong> {{ item.item_sum }}€
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <br>
+        <div class="order-footer">
+            <strong>Total Price:</strong> {{ order.final_price }}€
+        </div>
+        <hr>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<p>You have no completed orders.</p>
+{% endif %}
+{% endblock %}

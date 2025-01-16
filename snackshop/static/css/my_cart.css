@@ -1,0 +1,66 @@
+.item-box {
+    border: solid 1px #0077b3;
+    border-radius: 4px;
+    display: flex;
+    margin-bottom: 1px;
+}
+
+.product-name {
+    width: 35%;
+    text-decoration: none;
+
+}
+
+.product-name a {
+    text-decoration: none;
+}
+
+.product-price {
+    width: 25%;
+}
+
+.stock {
+    width: 10%;
+}
+
+.quantity {
+    width: 20%;
+}
+
+.total-price {
+    width: 10%;
+}
+
+
+
+h2 {
+    text-align: center;
+}
+
+
+
+h4 {
+    padding-left: 40px;
+
+}
+
+.total-sum {
+    margin: 0;
+    text-align: right;
+    padding: 0 25px 0 0;
+
+}
+
+.increase_button {
+    background-color: white;
+    color: #6666ff;
+    border: none;
+    font-size: 20px;
+}
+
+.decrease_button {
+    background-color: white;
+    color: #ff6666;
+    border: none;
+    font-size: 20px;
+}

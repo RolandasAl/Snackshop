@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/product_list.css' %}">
+<div class="container-fluid ">
+
+    {% if messages %}
+    <div class="alert alert-success text-center" role="alert" id="success-message">
+        {% for message in messages %}
+        {{ message }}
+        {% endfor %}
+    </div>
+    {% endif %}
+    <div class="row " style="height: 100%;">
+        <!-- Sidebar Filter -->
+        <div class="col-1">
+            <h4>Filter by Brand</h4>
+            <li class="list-group-item">
+                <a href="?sub_category={{ sub_category }}"
+                   class="text-decoration-none {% if not request.GET.brand %}active{% endif %}">All Brands</a>
+            </li>
+            {% if brands %}
+            {% for brand in brands %}
+            <li class="list-group-item {% if request.GET.brand == brand %}active{% endif %}">
+                <a href="?brand={{ brand }}&sub_category={{ sub_category }}" class="text-decoration-none">
+                    {{ brand }}</a>
+            </li>
+            {% endfor %}
+            {% else %}
+            <li class="list-group-item">No brands available.</li>
+            {% endif %}
+        </div>
+        <div class="col-9">
+            <div class="row ">
+                {% for product in products %}
+                <div class="card">
+                    <a href="{% url 'product_detail' product.id %}">
+                        {% if product.image %}
+                        <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+                        {% else %}
+                        <img src="https://via.placeholder.com/150" class="card-img-top" alt="No Image">
+                        {% endif %}
+                    </a>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ product.name }}</h5>
+                        <div class="card_info">
+                            <div class="text_box">
+                                <p class="card-text"><strong>Stock:</strong> {{ product.stock }}</p>
+                                {% if product.weight %}
+                                <p class="card-text"><strong>Weight:</strong> {{ product.weight }} g</p>
+                                {% endif %}
+                                {% if product.volume %}
+                                <p class="card-text"><strong>Volume:</strong> {{ product.volume }} ml</p>
+                                {% endif %}
+                                <p class="card-text"><strong>Price:</strong> {{ product.price }} €</p>
+                            </div>
+                            {% if user.is_authenticated %}
+                            <a href="{% url 'add_to_cart' product.id %}" class="cart_button">Add to Cart</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <p>No products found in this sub-category.</p>
+                {% endfor %}
+            </div>
+            <!-- Pagination -->
+            <div class="pagination">
+                <span class="step-links">
+                    {% if products.has_previous %}
+                        <a class="pagination-link" href="?page=1&brand={{ request.GET.brand }}&sub_category={{ sub_category }}">&laquo; First</a>
+                        <a class="pagination-link" href="?page={{ products.previous_page_number }}&brand={{ request.GET.brand }}&sub_category={{ sub_category }}">Previous</a>
+                    {% endif %}
+
+                    <span class="current">
+                        Page {{ products.number }} of {{ products.paginator.num_pages }}.
+                    </span>
+
+                    {% if products.has_next %}
+                        <a class="pagination-link" href="?page={{ products.next_page_number }}&brand={{ request.GET.brand }}&sub_category={{ sub_category }}">Next</a>
+                        <a class="pagination-link" href="?page={{ products.paginator.num_pages }}&brand={{ request.GET.brand }}&sub_category={{ sub_category }}">Last &raquo;</a>
+                    {% endif %}
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- JavaScript -->
+<script>
+    window.addEventListener('load', function () {
+        const successMessage = document.getElementById('success-message');
+        if (successMessage) {
+            setTimeout(function () {
+                successMessage.style.display = 'none'; // Hide the message
+            }, 3000); // 3000 ms = 3 seconds
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,11 @@
+.product_img {
+    width: 500px;
+    height: 500px;
+}
+
+.review-box {
+
+    margin-bottom: 5px;
+    padding: 5px;
+    border-radius: 8px;
+}

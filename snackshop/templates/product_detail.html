@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+{{ product.name }} - Product Details
+{% endblock %}
+
+{% block content %}
+
+{% if messages %}
+<div class="alert alert-success text-center" role="alert" id="success-message">
+    {% for message in messages %}
+    {{ message }}
+    {% endfor %}
+</div>
+{% endif %}
+
+<link rel="stylesheet" href="{% static 'css/product_detail.css' %}">
+<div class="container ">
+    <div class="d-flex mt-1">
+        {% if product.image %}
+        <img src="{{ product.image.url }}" alt="Product Image" class="product_img">
+        {% else %}
+        <p><em>No image available</em></p>
+        {% endif %}
+        <div class="order-box">
+            <h1>{{ product.name }}</h1>
+            <p class="mt-3"><strong>Price:</strong> {{ product.price }}€ </p>
+            {% if user.is_authenticated %}
+            <a href="{% url 'add_to_cart' product.id %}" class="btn btn-primary ">Add to Cart</a>
+            {% endif %}
+            {% if user.is_authenticated %}
+            <h5 class="mt-3">Write a Review:</h5>
+            <form method="POST" class="review-form ">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button class="btn btn-secondary " type="submit">Submit Review</button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+    {% if product.category == 'snack' %}
+    <p class="mt-5"><strong>Weight:</strong> {{ product.weight }}g</p>
+    {% endif %}
+    {% if product.category == 'drink' %}
+    <p class="mt-5"><strong>Volume:</strong> {{ product.volume }}ml</p>
+    <p><strong>Alcoholic:</strong> {{ product.is_alcoholic|yesno:"Yes,No" }}</p>
+    {% endif %}
+    <p><strong>Brand:</strong> {{ product.brand }}</p>
+    <p><strong>Description:</strong> {{ product.description }}</p>
+    <p><strong>Ingredients:</strong> {{ product.ingredients }}</p>
+</div>
+<hr>
+<h2>Reviews </h2>
+{% for review in reviews %}
+<div class="review-box">
+    <p><small>{{ review.date_created|date:"Y/m/d H:i" }}</small></p>
+    <p><strong>{{ review.reviewer }}</strong></p>
+    <p><strong>Rating:</strong> {{ review.rating }} / 5</p>
+    <p><strong>Review:</strong> {{ review.content }}</p>
+    <p></p>
+</div>
+<hr>
+{% empty %}
+<p>No reviews yet for this product.</p>
+{% endfor %}
+
+<!-- JavaScript -->
+<script>
+    window.addEventListener('load', function () {
+        const successMessage = document.getElementById('success-message');
+        if (successMessage) {
+            setTimeout(function () {
+                successMessage.style.display = 'none'; // Hide the message
+            }, 3000); // 3000 ms = 3 seconds
+        }
+    });
+</script>
+{% endblock %}

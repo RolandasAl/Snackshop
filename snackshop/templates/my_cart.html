@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}My Cart{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/my_cart.css' %}">
+
+
+{% if messages %}
+<div class="alert alert-success text-center" role="alert" id="success-message">
+    {% for message in messages %}
+    {{ message }}
+    {% endfor %}
+</div>
+{% endif %}
+
+<h2>My Cart</h2>
+<div class="cart">
+    {% if cart %}
+    <h4>Items:</h4>
+    <ul>
+        {% for item in cart.items.all %}
+        <div class="item-box">
+            <div class="product-name">
+                <a href="{% url 'product_detail' id=item.product.id %}">
+                    <strong>{{ item.product.name }}</strong>
+                </a>
+            </div>
+            <div class="product-price">
+                <strong>Price per item:</strong> {{ item.price }}€
+            </div>
+            <div class="stock">
+                <strong>Stock:</strong> {{ item.product.stock }}
+            </div>
+            <div class="quantity">
+                <strong>Quantity:</strong>
+                <form method="post" action="{% url 'update_quantity' item.id 'decrease' %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="decrease_button"><strong>-</strong></button>
+                </form>
+                {{ item.quantity }}
+                <form method="post" action="{% url 'update_quantity' item.id 'increase' %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="increase_button"><strong>+</strong></button>
+                </form>
+            </div>
+            <div class="total-price">
+                <strong>Sum:</strong> ${{ item.item_sum }}
+            </div>
+            <a href="{% url 'remove_item' item.id %}" class="btn btn-danger">Remove</a>
+        </div>
+        {% endfor %}
+    </ul>
+    <div class="total-sum">
+        <p><strong>Total:</strong> ${{ cart.total_price }}</p>
+    </div>
+    <form method="post" action="{% url 'create_order' %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary">Place Order</button>
+    </form>
+    {% else %}
+    <p>Your cart is empty.</p>
+    {% endif %}
+</div>
+{% endblock %}
